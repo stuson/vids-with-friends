@@ -19,10 +19,10 @@ io.on("connection", client => {
     const sockets = io.sockets.connected;
     const currentLeader = Object.values(sockets).find(socket => socket.user.leader);
 
-
     if (!currentLeader) {
         client.user.leader = true;
     }
+
     for (const userId in sockets) {
         io.emit("userUpdated", { userId, user: sockets[userId].user });
     }

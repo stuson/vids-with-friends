@@ -54,7 +54,7 @@ class App extends Component {
         const user = this.state.users[this.state.userIndex] || {};
         return (
             <div className="App">
-                {/* <VideoContainer socket={socket} user={user} /> */}
+                <VideoContainer socket={socket} user={user} />
                 <ChatContainer socket={socket} users={this.state.users} userIndex={this.state.userIndex} />
             </div>
         );

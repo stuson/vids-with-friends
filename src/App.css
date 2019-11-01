@@ -1,0 +1,14 @@
+:root {
+    --bg-dark: #333;
+    --font-dark: #f9fdff;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--font-dark);
+}
+
+.App {
+    display: flex;
+    width: 100%;
+}

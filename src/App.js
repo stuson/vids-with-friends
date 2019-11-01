@@ -25,10 +25,10 @@ class App extends Component {
         const userIndex = users.findIndex(user => user.id === userId);
         if (userIndex > -1) {
             users[userIndex] = user;
-            this.setState({users});
+            this.setState({ users });
         } else {
             users.push(user);
-            this.setState({users});
+            this.setState({ users });
         }
 
         this.updateUserIndex();
@@ -42,19 +42,19 @@ class App extends Component {
             users.splice(userIndex, 1);
         }
 
-        this.setState({users});
+        this.setState({ users });
         this.updateUserIndex();
     }
 
     updateUserIndex() {
-        this.setState({userIndex: this.state.users.findIndex(user => user.id === socket.id)});
+        this.setState({ userIndex: this.state.users.findIndex(user => user.id === socket.id) });
     }
 
     render() {
         const user = this.state.users[this.state.userIndex] || {};
         return (
             <div className="App">
-                <VideoContainer socket={socket} user={user} />
+                {/* <VideoContainer socket={socket} user={user} /> */}
                 <ChatContainer socket={socket} users={this.state.users} userIndex={this.state.userIndex} />
             </div>
         );

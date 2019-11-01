@@ -15,19 +15,19 @@ io.on("connection", client => {
         name: getName(),
         leader: false,
     };
-    
+
     const sockets = io.sockets.connected;
     const currentLeader = Object.values(sockets).find(socket => socket.user.leader);
-
 
     if (!currentLeader) {
         client.user.leader = true;
     }
+
     for (const userId in sockets) {
         io.emit("userUpdated", { userId, user: sockets[userId].user });
     }
 
-    client.on("disconnect", function() {
+    client.on("disconnect", function () {
         io.emit("userDisconnected", client.id);
         if (client.user.leader) {
             replaceLeader(client);
@@ -60,6 +60,16 @@ io.on("connection", client => {
     client.on("videoInfo", data => {
         video.time = data.time;
         io.emit("videoInfo", video);
+    });
+
+    client.on("userChatMessage", content => {
+        const message = {
+            user: client.user,
+            timestamp: new Date(),
+            content
+        };
+
+        io.emit("userChatMessage", message);
     });
 });
 

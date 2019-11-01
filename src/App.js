@@ -52,10 +52,11 @@ class App extends Component {
 
     render() {
         const user = this.state.users[this.state.userIndex] || {};
+        const userNames = this.state.users.map(user => user.name);
         return (
             <div className="App">
                 <VideoContainer socket={socket} user={user} />
-                <ChatContainer socket={socket} users={this.state.users} userIndex={this.state.userIndex} />
+                <ChatContainer socket={socket} userNames={userNames} user={user} />
             </div>
         );
     }

@@ -10,7 +10,7 @@ class ChatContainer extends Component {
                     <ChatInput socket={this.props.socket} />
                 </div>
                 <div id="chat-sidebar">
-                    <UserList users={this.props.users} />
+                    <UserList userNames={this.props.userNames} />
                 </div>
             </div>
         );
@@ -91,15 +91,15 @@ class ChatInput extends Component {
 }
 
 class UserList extends Component {
-    renderUser(user) {
-        return <li className="chat-user" key={user.id}>{user.name}</li>;
+    renderUser(userName, i) {
+        return <li className="chat-user" key={i}>{userName}</li>;
     }
 
     render() {
-        const userItems = this.props.users.map(user => this.renderUser(user));
+        const userItems = this.props.userNames.map(this.renderUser);
         return (
             <div id="user-list-container">
-                <span>{this.props.users.length} connected</span>
+                <span>{this.props.userNames.length} connected</span>
                 <ul id="user-list">
                     {userItems}
                 </ul>

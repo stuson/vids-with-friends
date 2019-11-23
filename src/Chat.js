@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./Chat.css"
+import "./Chat.css";
 
 class ChatContainer extends Component {
     render() {
@@ -19,11 +19,11 @@ class ChatContainer extends Component {
 
 class ChatBox extends Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             userMessages: []
-        }
+        };
 
         this.props.socket.on("userChatMessage", message => this.addUserMessage(message));
     }
@@ -55,11 +55,11 @@ class ChatBox extends Component {
 
 class ChatInput extends Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             inputValue: ""
-        }
+        };
     }
 
     onInputChange(e) {
@@ -70,7 +70,7 @@ class ChatInput extends Component {
 
     sendMessage(e) {
         if (e.which === 13) {
-            this.props.socket.emit("userChatMessage", this.state.inputValue)
+            this.props.socket.emit("userChatMessage", this.state.inputValue);
             this.setState({
                 inputValue: ""
             });

@@ -4,6 +4,38 @@ import YouTube from "react-youtube";
 import "./Video.css";
 
 class VideoContainer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            videos: [],
+        };
+
+        props.socket.on("videoAdded", video => this.addVideo(video));
+        props.socket.on("videoNotAdded", err => this.showError(err));
+        props.socket.on("videoRemoved", video => this.removeVideo(video));
+        props.socket.on("leaderEnded", _ => this.cueNextVideo());
+    }
+
+    addVideo(video) {
+        const videos = this.state.videos;
+        videos.push(video);
+        this.setState({videos});
+    }
+
+    showError(err){
+        console.error(err);
+    }
+
+    removeVideo(video) {
+        console.log(video);
+    }
+
+    cueNextVideo() {
+        const videos = this.state.videos;
+        videos.splice(0, 1);
+        this.setState({videos});
+    }
+
     render() {
         return (
             <div className="video-container">
@@ -11,8 +43,12 @@ class VideoContainer extends Component {
                     <li>Username - {this.props.user.name}</li>
                     <li>Leader - {`${this.props.user.leader}`}</li>
                 </ul>
-                <VideoPlayer leader={this.props.user.leader} socket={this.props.socket} />
-                <Playlist />
+                <VideoPlayer 
+                    leader={this.props.user.leader} socket={this.props.socket}
+                    videoId={this.state.videos.length ? this.state.videos[0].id : ""} 
+                />
+                <Playlist leader={this.props.user.leader} videos={this.state.videos} removeVideo={this.removeVideo} />
+                <VideoInput showError={this.showError} socket={this.props.socket} />
             </div>
         );
     }
@@ -77,8 +113,8 @@ class VideoPlayer extends Component {
         setInterval(() => this.sendVideoInfo(), 5000);
     }
 
-    onPlayerStateChange(e, status) {
-        switch(status) {
+    onPlayerStateChange(e) {
+        switch(e.data) {
             case 0:
                 this.onVideoEnd(e);
                 break;
@@ -137,15 +173,16 @@ class VideoPlayer extends Component {
                 modestbranding: 1,
                 rel: 0,
                 showinfo: 0,
+                autoplay: 1,
             }
         };
 
         return <YouTube
             id="video-player"
-            videoId="CBTmawSkibc"
+            videoId={this.props.videoId}
             opts={opts}
             className={this.props.leader ? "" : "no-controls"}
-            onStateChange={(e, state) => this.onPlayerStateChange(e, state)}
+            onStateChange={e => this.onPlayerStateChange(e)}
             onReady={e => this.onPlayerReady(e)}
             onPlay={e => this.onVideoPlay(e)}
             onPause={e => this.onVideoPause(e)}
@@ -154,8 +191,64 @@ class VideoPlayer extends Component {
 }
 
 class Playlist extends Component {
+    renderVideo(video, i) {
+        return <PlaylistItem key={i} video={video} removeVideo={this.props.removeVideo} />;
+    }
+
     render() {
-        return <div className="playlist"></div>;
+        const videos = this.props.videos.map((video, i) => this.renderVideo(video, i));
+        return <ul className="playlist">
+            {videos}
+        </ul>;
+    }
+}
+
+class PlaylistItem extends Component {
+    render() {
+        return <li>{this.props.video.title} <button onClick={e => this.props.removeVideo(this.props.video.id)}>x</button></li>;
+    }
+}
+
+class VideoInput extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            inputValue: ""
+        };
+    }
+
+    onInputChange(e) {
+        this.setState({
+            inputValue: e.target.value
+        });
+    }
+
+    addVideo(e) {
+        if (e.which === 13) {
+            try {
+                new URL(this.state.inputValue);
+                this.props.socket.emit("videoAdded", this.state.inputValue);
+            } catch (err) {
+                this.props.showError("Invalid URL");
+            } finally {
+                this.setState({
+                    inputValue: ""
+                });
+            }
+        }
+    }
+
+    render() {
+        return (
+            <input
+                type="text"
+                value={this.state.inputValue}
+                id="chat-input"
+                onChange={e => this.onInputChange(e)}
+                onKeyPress={e => this.addVideo(e)}
+            ></input>
+        );
     }
 }
 

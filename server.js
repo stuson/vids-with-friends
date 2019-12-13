@@ -1,4 +1,12 @@
 const io = require("socket.io")();
+const {google} = require("googleapis");
+
+require("dotenv").config();
+
+const youtube = google.youtube({
+    version: "v3",
+    auth: process.env.YOUTUBE_API_KEY,
+});
 
 const port = 8000;
 
@@ -49,6 +57,7 @@ io.on("connection", client => {
     client.on("leaderEnded", time => {
         video.state = 0;
         video.time = time;
+        client.emit("leaderEnded", time);
     });
 
     client.on("leaderBuffering", time => {
@@ -70,6 +79,27 @@ io.on("connection", client => {
         };
 
         io.emit("userChatMessage", message);
+    });
+
+    client.on("videoAdded", link => {
+        youtube.search.list({
+            q: link,
+            part: "id,snippet",
+            fields: "items(id,snippet(title))",
+        }).then(res => {
+            const videos = res.data.items;
+            if (videos.length) {
+                const video = videos[0].snippet;
+                video.id = videos[0].id.videoId;
+
+                io.emit("videoAdded", video);
+            } else {
+                io.emit("videoNotAdded", `No videos found for ${link}`);
+            }
+        }).catch(err => {
+            console.error(err);
+            io.emit("videoNotAdded", err);
+        });
     });
 });
 

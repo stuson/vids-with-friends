@@ -6,7 +6,7 @@ import ChatContainer from "./Chat.js";
 
 import "./App.css";
 
-const socket = openSocket("http://localhost:8000");
+const socket = openSocket(process.env.REACT_APP_SOCKET_ADDRESS);
 
 class App extends Component {
     constructor(props) {

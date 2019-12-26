@@ -85,9 +85,7 @@ class VideoPlayer extends Component {
             return 0;
         }
 
-        if (!this.props.leader) {
-            console.log(this.state.player.getCurrentTime(), video.time);
-            
+        if (!this.props.leader) {            
             if (Math.abs(this.state.player.getCurrentTime() - video.time) > 2) {
                 this.state.player.seekTo(video.time);
             }

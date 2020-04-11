@@ -176,25 +176,25 @@ class VideoPlayer extends Component {
         };
 
         if (this.props.videoId) {
-        return <YouTube
-            id="video-player"
-            videoId={this.props.videoId}
-            opts={opts}
-            className={this.props.leader ? "" : "no-controls"}
-            onStateChange={e => this.onPlayerStateChange(e)}
-            onReady={e => this.onPlayerReady(e)}
-            onPlay={e => this.onVideoPlay(e)}
-            onPause={e => this.onVideoPause(e)}
-        />;
+            return <YouTube
+                id="video-player"
+                videoId={this.props.videoId}
+                opts={opts}
+                className={this.props.leader ? "" : "no-controls"}
+                onStateChange={e => this.onPlayerStateChange(e)}
+                onReady={e => this.onPlayerReady(e)}
+                onPlay={e => this.onVideoPlay(e)}
+                onPause={e => this.onVideoPause(e)}
+            />;
         } else {
             return <div></div>
+        }
     }
-}
 }
 
 class Playlist extends Component {
     renderVideo(video, i) {
-        return <PlaylistItem key={i} video={video} removeVideo={this.props.removeVideo} />;
+        return <PlaylistItem key={i} video={video} removeVideo={this.props.removeVideo} leader={this.props.leader} />;
     }
 
     render() {
@@ -207,7 +207,7 @@ class Playlist extends Component {
 
 class PlaylistItem extends Component {
     render() {
-        return <li>{this.props.video.title} <button onClick={e => this.props.removeVideo(this.props.video.id)}>x</button></li>;
+        return <li>{this.props.video.title} {this.props.leader ? <button onClick={e => this.props.removeVideo(this.props.video.id)}>x</button> : ""} </li>;
     }
 }
 

@@ -175,6 +175,7 @@ class VideoPlayer extends Component {
             }
         };
 
+        if (this.props.videoId) {
         return <YouTube
             id="video-player"
             videoId={this.props.videoId}
@@ -185,7 +186,10 @@ class VideoPlayer extends Component {
             onPlay={e => this.onVideoPlay(e)}
             onPause={e => this.onVideoPause(e)}
         />;
+        } else {
+            return <div></div>
     }
+}
 }
 
 class Playlist extends Component {
